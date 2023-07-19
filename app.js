@@ -1,10 +1,49 @@
 const express = require("express");
-
+const router=express.Router();
 const app = express();
-
+const morgan = require("morgan");
+const pokeBank = require("./pokeBank");
+const pokemon=pokeBank.list();
 app.use(express.static("public"));
+//app.use(logger("dev"));
 
-app.get("/", (req, res) => res.send("Hello World!"));
+//app.use(morgan("dev"));
+//app.get("/", (req, res) => res.send("Hello World!"));
+console.log(pokemon);
+app.get("/",function(req,res) {
+  const pokemonList = pokeBank.list();
+  let html = "<h1>Pokedex</h1>";
+  pokemonList.forEach((pokemon) => {
+    html += `<p><a href="/pokemon/${pokemon.id}">${pokemon.name}</a></p>`;
+   
+  });
+  res.send(html);
+
+
+});
+app.get("/pokemon/:id",function(req,res) {
+  const id= req.params.id;
+  const post=pokeBank.find(id);
+  //console.log(post);
+  if(!post.id){
+    throw new Error("Not Found");
+  }
+ /*  if(!pokemon){
+    res.status(404).send("Pokemon not found");
+  } */
+    else{
+      let page=`<h1>${post.name}</h1>`;
+      page+=`<p>Type: ${post.type}</p>`;
+      page+= `<p>Trainer:${post.trainer}</p>`;
+      page+= `<p>date: ${post.date}</p>`;
+      page+=`<img src="${post.image}" />`;
+      res.send(page);
+    }
+  });
+
+
+
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
