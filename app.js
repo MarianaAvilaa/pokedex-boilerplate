@@ -42,6 +42,49 @@ app.get("/pokemon/:id",function(req,res) {
   });
 
 
+// Route to get all Pokemon
+const Pokemon = require("./Models/Pokemon");
+
+app.get("/pokemon", async (req, res) => {
+  const pokemon = await Pokemon.findAll();
+  res.json(pokemon);
+});
+// Route to get a single Pokemon by ID
+app.get("/pokemon/:id", async (req, res) => {
+  const pokemon = await Pokemon.findByPk(req.params.id);
+  if (pokemon) {
+    res.json(pokemon);
+  } else {
+    res.status(404).send("Pokemon not found");
+  }
+});
+//Route to create a new Pokemon
+app.post("/pokemon", async (req, res) => {
+  const pokemon = await Pokemon.create(req.body);
+  res.json(pokemon);
+});
+//Route to update a Pokemon by ID
+app.put("/pokemon/:id", async (req, res) => {
+  const pokemon = await Pokemon.findByPk(req.params.id);
+  if (pokemon) {
+    await pokemon.update(req.body);
+    res.json(pokemon);
+  } else {
+    res.status(404).send("Pokemon not found");
+  }
+});
+//Route to delete a Pokemon by ID
+app.delete("/pokemon/:id", async (req, res) => {
+  const pokemon = await Pokemon.findByPk(req.params.id);
+  if (pokemon) {
+    await pokemon.destroy();
+    res.status(204).send();
+  } else {
+    res.status(404).send("Pokemon not found");
+  }
+});
+
+
 
 
 
